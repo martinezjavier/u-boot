@@ -95,6 +95,34 @@ void get_board_mem_timings(struct board_sdrc_timings *timings)
 }
 #endif
 
+#ifdef CONFIG_VIDEO_OMAP3
+/*
+ * Enable DVI power
+ */
+static void dvi_pup(void)
+{
+	gpio_request(170, "");
+	gpio_direction_output(170, 0);
+	gpio_set_value(170, 1);
+}
+
+static void board_video_init(void)
+{
+	struct prcm *prcm_base = (struct prcm *)PRCM_BASE;
+
+	dvi_pup();
+
+	setbits_le32(&prcm_base->fclken_dss, FCK_DSS_ON);
+	setbits_le32(&prcm_base->iclken_dss, ICK_DSS_ON);
+
+	omap3_dss_panel_config(&dvid_cfg);
+
+	omap3_dss_enable();
+}
+#else
+static void board_video_init(void) { }
+#endif
+
 #if defined(CONFIG_CMD_NET)
 /*
  * Routine: setup_net_chip
@@ -162,6 +190,8 @@ int misc_init_r(void)
 	dieid_num_r();
 
 	set_fdt();
+
+	board_video_init();
 
 	return 0;
 }

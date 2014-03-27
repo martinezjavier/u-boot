@@ -42,6 +42,9 @@
 #define CONFIG_OMAP3_GPIO_5		/* GPIO128..159 is in GPIO bank 5 */
 #define CONFIG_OMAP3_GPIO_6		/* GPIO160..191 is in GPIO bank 6 */
 
+/* DSS */
+#define CONFIG_VIDEO_OMAP3		1
+
 /* USB */
 #define CONFIG_MUSB_UDC			1
 #define CONFIG_USB_OMAP3		1
