@@ -103,8 +103,9 @@
  *   text_offset bytes (specified in the header of the Image) into a 2MB
  *   boundary. The 'booti' command relocates the image if necessary. Linux uses
  *   a default text_offset of 0x80000.  In summary, loading at 0x80000
- *   satisfies all these constraints and reserving memory up to 0x02400000
- *   permits fairly large (roughly 36M) kernels.
+ *   satisfies all these constraints and reserving memory up to 0xa080000
+ *   permits fairly large (roughly 160M) images (too large for kernels but
+ *   could be possible for Android Boot Images that contain a large initrd).
  *
  * scriptaddr and pxefile_addr_r can be pretty much anywhere that doesn't
  * conflict with something else. Reserving 1M for each of them at
@@ -127,8 +128,8 @@
 	"kernel_addr_r=0x00080000\0" \
 	"scriptaddr=0x02400000\0" \
 	"pxefile_addr_r=0x02500000\0" \
-	"fdt_addr_r=0x02600000\0" \
-	"ramdisk_addr_r=0x02700000\0"
+	"fdt_addr_r=0xa080000\0" \
+	"ramdisk_addr_r=0xa180000\0"
 
 #if CONFIG_IS_ENABLED(CMD_MMC)
 	#define BOOT_TARGET_MMC(func) \
@@ -166,7 +167,9 @@
 #include <config_distro_bootcmd.h>
 
 #define CONFIG_EXTRA_ENV_SETTINGS \
+	"autoload=no\0" \
 	"dhcpuboot=usb start; dhcp u-boot.uimg; bootm\0" \
+	"fastboot_imgload=load usb 0 ${kernel_addr_r} boot.img\0" \
 	ENV_DEVICE_SETTINGS \
 	ENV_DFU_SETTINGS \
 	ENV_MEM_LAYOUT_SETTINGS \
